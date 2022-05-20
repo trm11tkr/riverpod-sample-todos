@@ -15,10 +15,10 @@ final allFilterKey = UniqueKey();
 /// We are using [StateNotifierProvider] here as a `List<Todo>` is a complex
 /// object, with advanced business logic like how to edit a todo.
 final todoListProvider = StateNotifierProvider<TodoList, List<Todo>>((ref) {
-  return TodoList(const [
-    Todo(id: 'todo-0', description: 'hi'),
-    Todo(id: 'todo-1', description: 'hello'),
-    Todo(id: 'todo-2', description: 'bonjour'),
+  return TodoList([
+    Todo(todoId: 'todo-0', title: 'hi', createdAt: DateTime.now()),
+    Todo(todoId: 'todo-1', title: 'hello', createdAt: DateTime.now()),
+    Todo(todoId: 'todo-2', title: 'bonjour', createdAt: DateTime.now()),
   ]);
 });
 
@@ -112,7 +112,7 @@ class Home extends HookConsumerWidget {
             for (var i = 0; i < todos.length; i++) ...[
               if (i > 0) const Divider(height: 0),
               Dismissible(
-                key: ValueKey(todos[i].id),
+                key: ValueKey(todos[i].todoId),
                 onDismissed: (_) {
                   ref.read(todoListProvider.notifier).remove(todos[i]);
                 },
@@ -250,12 +250,12 @@ class TodoItem extends HookConsumerWidget {
         focusNode: itemFocusNode,
         onFocusChange: (focused) {
           if (focused) {
-            textEditingController.text = todo.description;
+            textEditingController.text = todo.title;
           } else {
             // Commit changes only when the textfield is unfocused, for performance
             ref
                 .read(todoListProvider.notifier)
-                .edit(id: todo.id, description: textEditingController.text);
+                .edit(todoId: todo.todoId, title: textEditingController.text);
           }
         },
         child: ListTile(
@@ -266,7 +266,7 @@ class TodoItem extends HookConsumerWidget {
           leading: Checkbox(
             value: todo.completed,
             onChanged: (value) =>
-                ref.read(todoListProvider.notifier).toggle(todo.id),
+                ref.read(todoListProvider.notifier).toggle(todo.todoId),
           ),
           title: itemIsFocused
               ? TextField(
@@ -274,7 +274,14 @@ class TodoItem extends HookConsumerWidget {
                   focusNode: textFieldFocusNode,
                   controller: textEditingController,
                 )
-              : Text(todo.description),
+              : Text(todo.title),
+          subtitle: Text(
+            '${todo.createdAt.year.toString()}年' +
+                '${todo.createdAt.month.toString()}月' +
+                '${todo.createdAt.day.toString()}日 ' +
+                '${todo.createdAt.hour.toString()}:' +
+                '${todo.createdAt.minute.toString()}',
+          ),
         ),
       ),
     );

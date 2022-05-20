@@ -1,64 +1,64 @@
-import 'package:flutter/foundation.dart' show immutable;
+import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+part 'todo.freezed.dart';
+
+part 'todo.g.dart';
+
 const _uuid = Uuid();
 
-/// A read-only description of a todo-item
-@immutable
-class Todo {
-  const Todo({
-    required this.description,
-    required this.id,
-    this.completed = false,
-  });
+@freezed
+class Todo with _$Todo {
+  const factory Todo({
+    required String todoId,
+    required String title,
+    @Default(false) bool completed,
+    required DateTime createdAt,
+  }) = _Todo;
 
-  final String id;
-  final String description;
-  final bool completed;
-
-  @override
-  String toString() {
-    return 'Todo(description: $description, completed: $completed)';
-  }
+  factory Todo.fromJson(Map<String, dynamic> json) => _$TodoFromJson(json);
 }
 
 /// An object that controls a list of [Todo].
 class TodoList extends StateNotifier<List<Todo>> {
   TodoList([List<Todo>? initialTodos]) : super(initialTodos ?? []);
 
-  void add(String description) {
+  void add(String title) {
     state = [
       ...state,
       Todo(
-        id: _uuid.v4(),
-        description: description,
+        todoId: _uuid.v4(),
+        title: title,
+        createdAt: DateTime.now(),
       ),
     ];
   }
 
-  void toggle(String id) {
+  void toggle(String todoId) {
     state = [
       for (final todo in state)
-        if (todo.id == id)
-          Todo(
-            id: todo.id,
+        if (todo.todoId == todoId)
+          todo.copyWith(
+            todoId: todo.todoId,
+            title: todo.title,
             completed: !todo.completed,
-            description: todo.description,
+            createdAt: todo.createdAt,
           )
         else
-          todo,
+          todo
     ];
   }
 
-  void edit({required String id, required String description}) {
+  void edit({required String todoId, required String title}) {
     state = [
       for (final todo in state)
-        if (todo.id == id)
-          Todo(
-            id: todo.id,
+        if (todo.todoId == todoId)
+          todo.copyWith(
+            todoId: todo.todoId,
             completed: todo.completed,
-            description: description,
+            title: title,
           )
         else
           todo,
@@ -66,6 +66,6 @@ class TodoList extends StateNotifier<List<Todo>> {
   }
 
   void remove(Todo target) {
-    state = state.where((todo) => todo.id != target.id).toList();
+    state = state.where((todo) => todo.todoId != target.todoId).toList();
   }
 }
