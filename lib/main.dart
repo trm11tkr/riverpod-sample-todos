@@ -112,8 +112,20 @@ class Home extends HookConsumerWidget {
             for (var i = 0; i < todos.length; i++) ...[
               if (i > 0) const Divider(height: 0),
               Dismissible(
+                background: Container(
+                  color: Colors.red,
+                  padding: EdgeInsets.only(
+                    right: 10,
+                  ),
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
+                ),
+                direction: DismissDirection.endToStart,
                 key: ValueKey(todos[i].todoId),
-                onDismissed: (_) {
+                onDismissed: (direction) {
                   ref.read(todoListProvider.notifier).remove(todos[i]);
                 },
                 child: ProviderScope(
