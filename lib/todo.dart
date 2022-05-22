@@ -14,7 +14,7 @@ class Todo with _$Todo {
   const factory Todo({
     required String todoId,
     required String title,
-    @Default(false) bool completed,
+    @Default(false) bool isCompleted,
     required DateTime createdAt,
   }) = _Todo;
 
@@ -43,7 +43,7 @@ class TodoList extends StateNotifier<List<Todo>> {
           todo.copyWith(
             todoId: todo.todoId,
             title: todo.title,
-            completed: !todo.completed,
+            isCompleted: !todo.isCompleted,
             createdAt: todo.createdAt,
           )
         else
@@ -57,7 +57,7 @@ class TodoList extends StateNotifier<List<Todo>> {
         if (todo.todoId == todoId)
           todo.copyWith(
             todoId: todo.todoId,
-            completed: todo.completed,
+            isCompleted: todo.isCompleted,
             title: title,
           )
         else

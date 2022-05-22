@@ -1,7 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:todos/firebase.dart';
 
+import 'firebase_options.dart';
 import 'todo.dart';
 
 /// Some keys used for testing
@@ -26,7 +29,7 @@ final todoListProvider = StateNotifierProvider<TodoList, List<Todo>>((ref) {
 enum TodoListFilter {
   all,
   active,
-  completed,
+  isCompleted,
 }
 
 /// The currently active filter.
@@ -44,7 +47,7 @@ final todoListFilter = StateProvider((_) => TodoListFilter.all);
 /// This will also optimise unneeded rebuilds if the todo-list changes, but the
 /// number of uncompleted todos doesn't (such as when editing a todo).
 final uncompletedTodosCount = Provider<int>((ref) {
-  return ref.watch(todoListProvider).where((todo) => !todo.completed).length;
+  return ref.watch(todoListProvider).where((todo) => !todo.isCompleted).length;
 });
 
 /// The list of todos after applying of [todoListFilter].
@@ -56,16 +59,18 @@ final filteredTodos = Provider<List<Todo>>((ref) {
   final todos = ref.watch(todoListProvider);
 
   switch (filter) {
-    case TodoListFilter.completed:
-      return todos.where((todo) => todo.completed).toList();
+    case TodoListFilter.isCompleted:
+      return todos.where((todo) => todo.isCompleted).toList();
     case TodoListFilter.active:
-      return todos.where((todo) => !todo.completed).toList();
+      return todos.where((todo) => !todo.isCompleted).toList();
     case TodoListFilter.all:
       return todos;
   }
 });
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -74,8 +79,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Home(),
+    return MaterialApp(
+      home: getFireStorePage(),
     );
   }
 }
@@ -200,11 +205,11 @@ class Toolbar extends HookConsumerWidget {
             message: 'Only completed todos',
             child: TextButton(
               onPressed: () => ref.read(todoListFilter.notifier).state =
-                  TodoListFilter.completed,
+                  TodoListFilter.isCompleted,
               style: ButtonStyle(
                 visualDensity: VisualDensity.compact,
                 foregroundColor: MaterialStateProperty.all(
-                  textColorFor(TodoListFilter.completed),
+                  textColorFor(TodoListFilter.isCompleted),
                 ),
               ),
               child: const Text('Completed'),
@@ -276,7 +281,7 @@ class TodoItem extends HookConsumerWidget {
             textFieldFocusNode.requestFocus();
           },
           leading: Checkbox(
-            value: todo.completed,
+            value: todo.isCompleted,
             onChanged: (value) =>
                 ref.read(todoListProvider.notifier).toggle(todo.todoId),
           ),
