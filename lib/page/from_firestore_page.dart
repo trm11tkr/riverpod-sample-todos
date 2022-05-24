@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class getFireStorePage extends StatefulWidget {
+class FromFireStorePage extends StatefulWidget {
   @override
-  State<getFireStorePage> createState() => _getFireStorePageState();
+  State<FromFireStorePage> createState() => _FromFireStorePageState();
 }
 
-class _getFireStorePageState extends State<getFireStorePage> {
+class _FromFireStorePageState extends State<FromFireStorePage> {
   final Stream<QuerySnapshot> _todosStream =
       FirebaseFirestore.instance.collection('todos').snapshots();
 
@@ -18,7 +18,7 @@ class _getFireStorePageState extends State<getFireStorePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Todo List'),
+        title: Text('from fireStore'),
       ),
       body: Container(
         padding: EdgeInsets.only(left: 5.0, right: 5.0),
