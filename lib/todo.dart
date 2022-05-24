@@ -3,6 +3,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import 'date_time_timestamp_converter.dart';
+
 part 'todo.freezed.dart';
 
 part 'todo.g.dart';
@@ -15,7 +17,7 @@ class Todo with _$Todo {
     required String todoId,
     required String title,
     @Default(false) bool isCompleted,
-    required DateTime createdAt,
+    @DateTimeTimestampConverter() required DateTime createdAt,
   }) = _Todo;
 
   factory Todo.fromJson(Map<String, dynamic> json) => _$TodoFromJson(json);

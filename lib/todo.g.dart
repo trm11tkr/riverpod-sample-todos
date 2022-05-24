@@ -17,5 +17,5 @@ Map<String, dynamic> _$$_TodoToJson(_$_Todo instance) => <String, dynamic>{
       'todoId': instance.todoId,
       'title': instance.title,
       'isCompleted': instance.isCompleted,
-      'createdAt': instance.createdAt.toIso8601String(),
+      'createdAt': instance.createdAt,
     };
