@@ -41,10 +41,7 @@ class TodoList extends StateNotifier<List<Todo>> {
       for (final todo in state)
         if (todo.todoId == todoId)
           todo.copyWith(
-            todoId: todo.todoId,
-            title: todo.title,
             completed: !todo.completed,
-            createdAt: todo.createdAt,
           )
         else
           todo
@@ -56,8 +53,6 @@ class TodoList extends StateNotifier<List<Todo>> {
       for (final todo in state)
         if (todo.todoId == todoId)
           todo.copyWith(
-            todoId: todo.todoId,
-            completed: todo.completed,
             title: title,
           )
         else
