@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 import 'todo.dart';
 
@@ -65,7 +67,8 @@ final filteredTodos = Provider<List<Todo>>((ref) {
   }
 });
 
-void main() {
+Future<void> main() async {
+  await initializeDateFormatting('ja');
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -287,13 +290,8 @@ class TodoItem extends HookConsumerWidget {
                   controller: textEditingController,
                 )
               : Text(todo.title),
-          subtitle: Text(
-            '${todo.createdAt.year.toString()}年' +
-                '${todo.createdAt.month.toString()}月' +
-                '${todo.createdAt.day.toString()}日 ' +
-                '${todo.createdAt.hour.toString()}:' +
-                '${todo.createdAt.minute.toString()}',
-          ),
+          subtitle:
+              Text(DateFormat.yMMMd('ja').add_Hm().format(todo.createdAt)),
         ),
       ),
     );
