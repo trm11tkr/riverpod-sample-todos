@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../data/todo.dart';
+import 'package:intl/intl.dart';
 
+import '../data/todo.dart';
 
 final addTodoKey = UniqueKey();
 final activeFilterKey = UniqueKey();
@@ -22,6 +23,7 @@ enum TodoListFilter {
   active,
   isCompleted,
 }
+
 final todoListFilter = StateProvider((_) => TodoListFilter.all);
 
 final uncompletedTodosCount = Provider<int>((ref) {
@@ -40,8 +42,6 @@ final filteredTodos = Provider<List<Todo>>((ref) {
       return todos;
   }
 });
-
-
 
 class BasicTodoPage extends HookConsumerWidget {
   const BasicTodoPage({Key? key}) : super(key: key);
@@ -145,11 +145,11 @@ class Toolbar extends HookConsumerWidget {
             message: 'All todos',
             child: TextButton(
               onPressed: () =>
-              ref.read(todoListFilter.notifier).state = TodoListFilter.all,
+                  ref.read(todoListFilter.notifier).state = TodoListFilter.all,
               style: ButtonStyle(
                 visualDensity: VisualDensity.compact,
                 foregroundColor:
-                MaterialStateProperty.all(textColorFor(TodoListFilter.all)),
+                    MaterialStateProperty.all(textColorFor(TodoListFilter.all)),
               ),
               child: const Text('All'),
             ),
@@ -248,17 +248,13 @@ class TodoItem extends HookConsumerWidget {
           ),
           title: itemIsFocused
               ? TextField(
-            autofocus: true,
-            focusNode: textFieldFocusNode,
-            controller: textEditingController,
-          )
+                  autofocus: true,
+                  focusNode: textFieldFocusNode,
+                  controller: textEditingController,
+                )
               : Text(todo.title),
           subtitle: Text(
-            '${todo.createdAt.year.toString()}年' +
-                '${todo.createdAt.month.toString()}月' +
-                '${todo.createdAt.day.toString()}日 ' +
-                '${todo.createdAt.hour.toString()}:' +
-                '${todo.createdAt.minute.toString()}',
+            DateFormat.yMMMd('ja').add_Hm().format(todo.createdAt),
           ),
         ),
       ),
