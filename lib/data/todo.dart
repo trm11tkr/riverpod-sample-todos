@@ -6,7 +6,6 @@ import 'package:uuid/uuid.dart';
 import 'date_time_timestamp_converter.dart';
 
 part 'todo.freezed.dart';
-
 part 'todo.g.dart';
 
 const _uuid = Uuid();
@@ -43,10 +42,7 @@ class TodoList extends StateNotifier<List<Todo>> {
       for (final todo in state)
         if (todo.todoId == todoId)
           todo.copyWith(
-            todoId: todo.todoId,
-            title: todo.title,
             isCompleted: !todo.isCompleted,
-            createdAt: todo.createdAt,
           )
         else
           todo
@@ -58,8 +54,6 @@ class TodoList extends StateNotifier<List<Todo>> {
       for (final todo in state)
         if (todo.todoId == todoId)
           todo.copyWith(
-            todoId: todo.todoId,
-            isCompleted: todo.isCompleted,
             title: title,
           )
         else
