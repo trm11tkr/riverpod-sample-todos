@@ -8,6 +8,7 @@ class FireStoreController {
   FireStoreController({required CollectionReference this.collection});
   CollectionReference collection;
 
+  /// Todoの追加
   void add(String title) {
     final String todoId = (Uuid().v1()).toString();
     collection.doc(todoId).set(
@@ -16,11 +17,12 @@ class FireStoreController {
         );
   }
 
+  /// Todoの削除
   void delete(String todoId) {
     collection.doc(todoId).delete();
   }
 
-  /// Todoの削除
+  /// Todoのステータスを反転
   void toggle(Todo todo) {
     collection.doc(todo.todoId).update(
           todo
