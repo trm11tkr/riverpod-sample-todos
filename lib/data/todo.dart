@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:uuid/uuid.dart';
 
-part 'todo.freezed.dart';
+import 'date_time_timestamp_converter.dart';
 
+part 'todo.freezed.dart';
 part 'todo.g.dart';
 
 const _uuid = Uuid();
@@ -14,8 +16,8 @@ class Todo with _$Todo {
   const factory Todo({
     required String todoId,
     required String title,
-    @Default(false) bool completed,
-    required DateTime createdAt,
+    @Default(false) bool isCompleted,
+    @DateTimeTimestampConverter() required DateTime createdAt,
   }) = _Todo;
 
   factory Todo.fromJson(Map<String, dynamic> json) => _$TodoFromJson(json);
@@ -29,7 +31,7 @@ class TodoList extends StateNotifier<List<Todo>> {
     state = [
       ...state,
       Todo(
-        todoId: _uuid.v4(),
+        todoId: _uuid.v1(),
         title: title,
         createdAt: DateTime.now(),
       ),
@@ -41,10 +43,7 @@ class TodoList extends StateNotifier<List<Todo>> {
       for (final todo in state)
         if (todo.todoId == todoId)
           todo.copyWith(
-            todoId: todo.todoId,
-            title: todo.title,
-            completed: !todo.completed,
-            createdAt: todo.createdAt,
+            isCompleted: !todo.isCompleted,
           )
         else
           todo
@@ -56,8 +55,6 @@ class TodoList extends StateNotifier<List<Todo>> {
       for (final todo in state)
         if (todo.todoId == todoId)
           todo.copyWith(
-            todoId: todo.todoId,
-            completed: todo.completed,
             title: title,
           )
         else
