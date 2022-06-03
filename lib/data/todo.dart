@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod/riverpod.dart';
@@ -30,7 +31,7 @@ class TodoList extends StateNotifier<List<Todo>> {
     state = [
       ...state,
       Todo(
-        todoId: _uuid.v4(),
+        todoId: _uuid.v1(),
         title: title,
         createdAt: DateTime.now(),
       ),
