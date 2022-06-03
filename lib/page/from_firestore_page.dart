@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import '../controller/firestore_controller.dart';
 import '../data/todo.dart';
 
-final addWithFirestoreKey = UniqueKey();
+final _addWithFirestoreKey = UniqueKey();
 
 final collectionProvider =
     Provider((ref) => FirebaseFirestore.instance.collection('todos'));
@@ -53,7 +53,7 @@ class FromFirestorePage extends HookConsumerWidget {
           child: Column(
             children: [
               TextField(
-                key: addWithFirestoreKey,
+                key: _addWithFirestoreKey,
                 controller: newTodoController,
                 decoration: const InputDecoration(
                   labelText: 'What needs to be done?',
@@ -84,7 +84,7 @@ class FromFirestorePage extends HookConsumerWidget {
                               onDismissed: (direction) {
                                 controller.delete(todo[index].todoId);
                               },
-                              child: FirestoreTodoItem(
+                              child: _FirestoreTodoItem(
                                 todo: todo[index],
                                 controller: controller,
                               ));
@@ -108,8 +108,8 @@ class FromFirestorePage extends HookConsumerWidget {
 }
 
 // Item
-class FirestoreTodoItem extends HookWidget {
-  const FirestoreTodoItem(
+class _FirestoreTodoItem extends HookWidget {
+  const _FirestoreTodoItem(
       {Key? key,
       required Todo this.todo,
       required FirestoreController this.controller})
@@ -119,39 +119,39 @@ class FirestoreTodoItem extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final itemFocusNode = useFocusNode();
-    final itemIsFocused = useIsFocused(itemFocusNode);
+    final _itemFocusNode = useFocusNode();
+    final _itemIsFocused = _useIsFocused(_itemFocusNode);
 
-    final textEditingController = useTextEditingController();
-    final textFieldFocusNode = useFocusNode();
+    final _textEditingController = useTextEditingController();
+    final _textFieldFocusNode = useFocusNode();
 
     return Material(
       color: Colors.white,
       elevation: 6,
       child: Focus(
-        focusNode: itemFocusNode,
+        focusNode: _itemFocusNode,
         onFocusChange: (focused) {
           if (focused) {
-            textEditingController.text = todo.title;
+            _textEditingController.text = todo.title;
           } else {
-            controller.edit(todo, textEditingController.text);
+            controller.edit(todo, _textEditingController.text);
           }
         },
         child: ListTile(
           onTap: () {
-            itemFocusNode.requestFocus();
-            textFieldFocusNode.requestFocus();
+            _itemFocusNode.requestFocus();
+            _textFieldFocusNode.requestFocus();
           },
           leading: Checkbox(
               value: todo.isCompleted,
               onChanged: (value) {
                 controller.toggle(todo);
               }),
-          title: itemIsFocused
+          title: _itemIsFocused
               ? TextField(
                   autofocus: true,
-                  focusNode: textFieldFocusNode,
-                  controller: textEditingController,
+                  focusNode: _textFieldFocusNode,
+                  controller: _textEditingController,
                 )
               : Text(todo.title),
           subtitle: Text(
@@ -163,17 +163,17 @@ class FirestoreTodoItem extends HookWidget {
   }
 }
 
-bool useIsFocused(FocusNode node) {
-  final isFocused = useState(node.hasFocus);
+bool _useIsFocused(FocusNode node) {
+  final _isFocused = useState(node.hasFocus);
 
   useEffect(() {
     void listener() {
-      isFocused.value = node.hasFocus;
+      _isFocused.value = node.hasFocus;
     }
 
     node.addListener(listener);
     return () => node.removeListener(listener);
   }, [node]);
 
-  return isFocused.value;
+  return _isFocused.value;
 }

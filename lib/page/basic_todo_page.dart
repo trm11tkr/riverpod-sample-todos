@@ -5,10 +5,10 @@ import 'package:intl/intl.dart';
 
 import '../data/todo.dart';
 
-final addTodoKey = UniqueKey();
-final activeFilterKey = UniqueKey();
-final completedFilterKey = UniqueKey();
-final allFilterKey = UniqueKey();
+final _addTodoKey = UniqueKey();
+final _activeFilterKey = UniqueKey();
+final _completedFilterKey = UniqueKey();
+final _allFilterKey = UniqueKey();
 
 final todoListProvider = StateNotifierProvider<TodoList, List<Todo>>((ref) {
   return TodoList([
@@ -66,9 +66,9 @@ class BasicTodoPage extends HookConsumerWidget {
         body: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
           children: [
-            const Title(),
+            const _Title(),
             TextField(
-              key: addTodoKey,
+              key: _addTodoKey,
               controller: newTodoController,
               decoration: const InputDecoration(
                 labelText: 'What needs to be done?',
@@ -104,7 +104,7 @@ class BasicTodoPage extends HookConsumerWidget {
                   overrides: [
                     _currentTodo.overrideWithValue(todos[i]),
                   ],
-                  child: const TodoItem(),
+                  child: const _TodoItem(),
                 ),
               )
             ],
@@ -122,10 +122,10 @@ class Toolbar extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final filter = ref.watch(todoListFilter);
+    final _filter = ref.watch(todoListFilter);
 
     Color? textColorFor(TodoListFilter value) {
-      return filter == value ? Colors.blue : Colors.black;
+      return _filter == value ? Colors.blue : Colors.black;
     }
 
     return Material(
@@ -139,7 +139,7 @@ class Toolbar extends HookConsumerWidget {
             ),
           ),
           Tooltip(
-            key: allFilterKey,
+            key: _allFilterKey,
             message: 'All todos',
             child: TextButton(
               onPressed: () =>
@@ -153,7 +153,7 @@ class Toolbar extends HookConsumerWidget {
             ),
           ),
           Tooltip(
-            key: activeFilterKey,
+            key: _activeFilterKey,
             message: 'Only uncompleted todos',
             child: TextButton(
               onPressed: () => ref.read(todoListFilter.notifier).state =
@@ -168,7 +168,7 @@ class Toolbar extends HookConsumerWidget {
             ),
           ),
           Tooltip(
-            key: completedFilterKey,
+            key: _completedFilterKey,
             message: 'Only completed todos',
             child: TextButton(
               onPressed: () => ref.read(todoListFilter.notifier).state =
@@ -188,8 +188,8 @@ class Toolbar extends HookConsumerWidget {
   }
 }
 
-class Title extends StatelessWidget {
-  const Title({Key? key}) : super(key: key);
+class _Title extends StatelessWidget {
+  const _Title({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -208,47 +208,47 @@ class Title extends StatelessWidget {
 
 final _currentTodo = Provider<Todo>((ref) => throw UnimplementedError());
 
-class TodoItem extends HookConsumerWidget {
-  const TodoItem({Key? key}) : super(key: key);
+class _TodoItem extends HookConsumerWidget {
+  const _TodoItem({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final todo = ref.watch(_currentTodo);
-    final itemFocusNode = useFocusNode();
-    final itemIsFocused = useIsFocused(itemFocusNode);
+    final _itemFocusNode = useFocusNode();
+    final _itemIsFocused = _useIsFocused(_itemFocusNode);
 
-    final textEditingController = useTextEditingController();
-    final textFieldFocusNode = useFocusNode();
+    final _textEditingController = useTextEditingController();
+    final _textFieldFocusNode = useFocusNode();
 
     return Material(
       color: Colors.white,
       elevation: 6,
       child: Focus(
-        focusNode: itemFocusNode,
+        focusNode: _itemFocusNode,
         onFocusChange: (focused) {
           if (focused) {
-            textEditingController.text = todo.title;
+            _textEditingController.text = todo.title;
           } else {
             ref
                 .read(todoListProvider.notifier)
-                .edit(todoId: todo.todoId, title: textEditingController.text);
+                .edit(todoId: todo.todoId, title: _textEditingController.text);
           }
         },
         child: ListTile(
           onTap: () {
-            itemFocusNode.requestFocus();
-            textFieldFocusNode.requestFocus();
+            _itemFocusNode.requestFocus();
+            _textFieldFocusNode.requestFocus();
           },
           leading: Checkbox(
             value: todo.isCompleted,
             onChanged: (value) =>
                 ref.read(todoListProvider.notifier).toggle(todo.todoId),
           ),
-          title: itemIsFocused
+          title: _itemIsFocused
               ? TextField(
                   autofocus: true,
-                  focusNode: textFieldFocusNode,
-                  controller: textEditingController,
+                  focusNode: _textFieldFocusNode,
+                  controller: _textEditingController,
                 )
               : Text(todo.title),
           subtitle: Text(
@@ -260,17 +260,17 @@ class TodoItem extends HookConsumerWidget {
   }
 }
 
-bool useIsFocused(FocusNode node) {
-  final isFocused = useState(node.hasFocus);
+bool _useIsFocused(FocusNode node) {
+  final _isFocused = useState(node.hasFocus);
 
   useEffect(() {
     void listener() {
-      isFocused.value = node.hasFocus;
+      _isFocused.value = node.hasFocus;
     }
 
     node.addListener(listener);
     return () => node.removeListener(listener);
   }, [node]);
 
-  return isFocused.value;
+  return _isFocused.value;
 }
