@@ -4,15 +4,15 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../controller/fire_store_controller.dart';
+import '../controller/firestore_controller.dart';
 import '../data/todo.dart';
 
-final addWithFireStoreKey = UniqueKey();
+final addWithFirestoreKey = UniqueKey();
 
 final collectionProvider =
     Provider((ref) => FirebaseFirestore.instance.collection('todos'));
 
-// StreamでFireStoreのデータをリストとして取得
+// StreamでFirestoreのデータをリストとして取得
 final todoListStreamProvider = StreamProvider.autoDispose<List<Todo>>((ref) {
   CollectionReference collection = ref.read(collectionProvider);
   return collection.snapshots().map((snapshot) {
@@ -23,8 +23,8 @@ final todoListStreamProvider = StreamProvider.autoDispose<List<Todo>>((ref) {
   });
 });
 
-class FromFireStorePage extends HookConsumerWidget {
-  const FromFireStorePage({Key? key}) : super(key: key);
+class FromFirestorePage extends HookConsumerWidget {
+  const FromFirestorePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,15 +32,15 @@ class FromFireStorePage extends HookConsumerWidget {
     final newTodoController = useTextEditingController();
 
     // コントローラーのインスタンス化
-    final FireStoreController controller =
-        FireStoreController(collection: ref.read(collectionProvider));
+    final FirestoreController controller =
+        FirestoreController(collection: ref.read(collectionProvider));
 
     return MaterialApp(
         home: GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('From FireStore'),
+          title: const Text('From Firestore'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios),
             onPressed: () {
@@ -54,7 +54,7 @@ class FromFireStorePage extends HookConsumerWidget {
           child: Column(
             children: [
               TextField(
-                key: addWithFireStoreKey,
+                key: addWithFirestoreKey,
                 controller: newTodoController,
                 decoration: const InputDecoration(
                   labelText: 'What needs to be done?',
@@ -85,7 +85,7 @@ class FromFireStorePage extends HookConsumerWidget {
                               onDismissed: (direction) {
                                 controller.delete(todo[index].todoId);
                               },
-                              child: FireStoreTodoItem(
+                              child: FirestoreTodoItem(
                                 todo: todo[index],
                                 controller: controller,
                               ));
@@ -109,14 +109,14 @@ class FromFireStorePage extends HookConsumerWidget {
 }
 
 // Item
-class FireStoreTodoItem extends HookWidget {
-  const FireStoreTodoItem(
+class FirestoreTodoItem extends HookWidget {
+  const FirestoreTodoItem(
       {Key? key,
       required Todo this.todo,
-      required FireStoreController this.controller})
+      required FirestoreController this.controller})
       : super(key: key);
   final Todo todo;
-  final FireStoreController controller;
+  final FirestoreController controller;
 
   @override
   Widget build(BuildContext context) {

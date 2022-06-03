@@ -3,9 +3,9 @@ import 'package:uuid/uuid.dart';
 
 import '../data/todo.dart';
 
-/// FireStoreのTodoに対するコントローラ
-class FireStoreController {
-  FireStoreController({required CollectionReference this.collection});
+/// FirestoreのTodoに対するコントローラ
+class FirestoreController {
+  FirestoreController({required CollectionReference this.collection});
   CollectionReference collection;
 
   /// Todoの追加

@@ -53,7 +53,7 @@ class Home extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context)
                     .push(MaterialPageRoute(builder: (context) {
-                  return FromFireStorePage();
+                  return FromFirestorePage();
                 }));
               },
               child: const Text('from FireStore'),
