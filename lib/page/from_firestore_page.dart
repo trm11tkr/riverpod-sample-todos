@@ -35,8 +35,7 @@ class FromFirestorePage extends HookConsumerWidget {
     final FirestoreController controller =
         FirestoreController(collection: ref.read(collectionProvider));
 
-    return MaterialApp(
-        home: GestureDetector(
+    return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
@@ -104,7 +103,7 @@ class FromFirestorePage extends HookConsumerWidget {
           ),
         ),
       ),
-    ));
+    );
   }
 }
 

@@ -51,66 +51,64 @@ class BasicTodoPage extends HookConsumerWidget {
     final todos = ref.watch(filteredTodos);
     final newTodoController = useTextEditingController();
 
-    return MaterialApp(
-      home: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text('basic todo'),
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios),
-              onPressed: () {
-                Navigator.of(context).pop();
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('basic todo'),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        body: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+          children: [
+            const Title(),
+            TextField(
+              key: addTodoKey,
+              controller: newTodoController,
+              decoration: const InputDecoration(
+                labelText: 'What needs to be done?',
+              ),
+              onSubmitted: (value) {
+                ref.read(todoListProvider.notifier).add(value);
+                newTodoController.clear();
               },
             ),
-          ),
-          body: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-            children: [
-              const Title(),
-              TextField(
-                key: addTodoKey,
-                controller: newTodoController,
-                decoration: const InputDecoration(
-                  labelText: 'What needs to be done?',
+            const SizedBox(height: 42),
+            const Toolbar(),
+            if (todos.isNotEmpty) const Divider(height: 0),
+            for (var i = 0; i < todos.length; i++) ...[
+              if (i > 0) const Divider(height: 0),
+              Dismissible(
+                background: Container(
+                  color: Colors.red,
+                  padding: EdgeInsets.only(
+                    right: 10,
+                  ),
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
                 ),
-                onSubmitted: (value) {
-                  ref.read(todoListProvider.notifier).add(value);
-                  newTodoController.clear();
+                direction: DismissDirection.endToStart,
+                key: ValueKey(todos[i].todoId),
+                onDismissed: (direction) {
+                  ref.read(todoListProvider.notifier).remove(todos[i]);
                 },
-              ),
-              const SizedBox(height: 42),
-              const Toolbar(),
-              if (todos.isNotEmpty) const Divider(height: 0),
-              for (var i = 0; i < todos.length; i++) ...[
-                if (i > 0) const Divider(height: 0),
-                Dismissible(
-                  background: Container(
-                    color: Colors.red,
-                    padding: EdgeInsets.only(
-                      right: 10,
-                    ),
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: Icon(
-                      Icons.delete,
-                      color: Colors.white,
-                    ),
-                  ),
-                  direction: DismissDirection.endToStart,
-                  key: ValueKey(todos[i].todoId),
-                  onDismissed: (direction) {
-                    ref.read(todoListProvider.notifier).remove(todos[i]);
-                  },
-                  child: ProviderScope(
-                    overrides: [
-                      _currentTodo.overrideWithValue(todos[i]),
-                    ],
-                    child: const TodoItem(),
-                  ),
-                )
-              ],
+                child: ProviderScope(
+                  overrides: [
+                    _currentTodo.overrideWithValue(todos[i]),
+                  ],
+                  child: const TodoItem(),
+                ),
+              )
             ],
-          ),
+          ],
         ),
       ),
     );
